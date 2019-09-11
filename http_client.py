@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    humidity, temperature = led.get_hum_temp()
-    return "umidade: {}\ntemperatura: {}C".format(humidity,temperature)
+    print('\n')
+	return 'Projeto Vivo\nValet Iot'
 
 @app.route('/abrir')
 def frente():
