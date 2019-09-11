@@ -1,7 +1,5 @@
-#VALET
-```
+#VALET  
 projeto IoT para a faculdade
-```
   
 
 ## Instruções
