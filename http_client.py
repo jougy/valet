@@ -5,22 +5,23 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    print('\n')
-	return 'Projeto Vivo\nValet Iot'
+    print('projeto vivo')
 
 @app.route('/abrir')
 def frente():
+    print('cancela abrindo')
     valet.frente()
-    return 'cancela abrindo'
 
 @app.route('/fechar')
 def tras():
+    print('cancela fechando')
     valet.tras()
-    return 'cancela fechando'
+    
 @app.route('/parar')
 def parar():
-	valet.parar()
-	return 'parando motores'
+    print('parando motores')
+    valet.parar()
+    
 
 if __name__ == '__main__':
    app.run(host='0.0.0.0', port=80)
