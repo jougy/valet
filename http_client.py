@@ -5,22 +5,21 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    print('projeto vivo')
+    return 'projeto vivo'
+    
 
 @app.route('/abrir')
 def frente():
-    print('cancela abrindo')
     valet.frente()
-
+    return 'cancela abrindo'
 @app.route('/fechar')
 def tras():
-    print('cancela fechando')
     valet.tras()
-    
+    return 'cancela fechando'
 @app.route('/parar')
 def parar():
-    print('parando motores')
     valet.parar()
+    return 'parando motores'
     
 
 if __name__ == '__main__':
