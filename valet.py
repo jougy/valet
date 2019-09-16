@@ -4,6 +4,11 @@ import sys
 import os
 import threading
 
+##########################################################
+#NAO ESQUECER DE COLOCAR O BTM2 NA FUNCAO 'BOTAO()'      #
+#QUANDO O SEGUNDO SENSOR DE FIM DE CURSO FOR IMPLEMENTADO#
+##########################################################
+
 mA = 12
 mB = 13
 sfc1 = 18
@@ -26,18 +31,16 @@ def frente():
     a.output (mA, a.HIGH)
     a.output (mB, a.LOW)
 def tras():
-    btm2 = a.input(sfc2)
     print('funcao tras acionada')
     a.output (mA, a.LOW)
     a.output (mB, a.HIGH)
 def botao():
     while True:
-        time.sleep(0.2)
+        time.sleep(0.1)
         btm1 = a.input(sfc1)
         btm2 = a.input(sfc2)
         if btm1 == 0:
             parar()
-
 
 os.system('clear')
 if __name__ == '__main__' :
