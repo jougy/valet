@@ -2,6 +2,7 @@ import RPi.GPIO as a
 import time
 import sys
 import os
+import threading
 
 mA = 12
 mB = 13
@@ -34,7 +35,7 @@ def botao():
         time.sleep(0.2)
         btm1 = a.input(sfc1)
         btm2 = a.input(sfc2)
-        if btm1 == 0 or btm2 == 0:
+        if btm1 == 0:
             parar()
 
 
@@ -52,8 +53,6 @@ if __name__ == '__main__' :
             frente()
         elif resposta == 'tras':
             tras()
-            time.sleep(2)
-            parar()
         elif resposta == 'parar':
             parar()
         elif resposta == 'sair':
