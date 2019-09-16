@@ -16,7 +16,6 @@ a.setup (sfc1, a.IN)
 a.setup (sfc2, a.IN)
 
 
-
 def parar():
     print('funcao parar acionada')
     a.output (mA, a.LOW)

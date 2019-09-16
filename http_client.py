@@ -21,8 +21,6 @@ def parar():
     valet.parar()
     return 'parando motores'
 
-
-
 if __name__ == '__main__':
     t1 = threading.Thread(target=valet.botao, args=[])
     t1.start()
