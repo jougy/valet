@@ -33,7 +33,8 @@ def botao():
     while True:
         time.sleep(0.2)
         btm1 = a.input(sfc1)
-        if btm1 == 0:
+        btm2 = a.input(sfc2)
+        if btm1 == 0 or btm2 == 0:
             parar()
 
 
