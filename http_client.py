@@ -1,7 +1,8 @@
 from flask import Flask
 import valet
 import threading
-
+t1 = threading.Thread(target=valet.botao, args=[])
+    t1.start()
 app = Flask(__name__)
 
 @app.route('/')
@@ -22,7 +23,7 @@ def parar():
     return 'parando motores'
 
 if __name__ == '__main__':
-    t1 = threading.Thread(target=valet.botao, args=[])
-    t1.start()
+    #t1 = threading.Thread(target=valet.botao, args=[])
+    #t1.start()
     app.run(host='0.0.0.0', port=80)
     
