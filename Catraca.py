@@ -1,15 +1,22 @@
-from socket import *
-CTR="DISP"
-servidor ="localhost"
-porta= 43210
-Conexao= socket(AF_INET,SOCK_STREAM)
-Conexao.bind((servidor,porta))
-
-Conexao.listen(3)
+Python 3.7.4 (tags/v3.7.4:e09359112e, Jul  8 2019, 19:29:22) [MSC v.1916 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license()" for more information.
+>>> import requests as r
+import json
+import pandas as pd
+import time
+minutoInicial=0
+horaInicial=0
+minutoFinal=0
+horaFinal=0
+minutoMedio=0
+horaMedia=0
+tempoFinal=0
+ipGet="http://192.168.25.23:5000/pegar"
+ipPost="http://192.168.25.23:5000/mudar"
 #--------------------------------------------------------------------
 #REFERENTE A PINAGEM
 import RPi.GPIO as pin
-import time
+import datetime
 mA = 12
 mB = 13
 sensorFimdeCurso1 = 18
@@ -24,41 +31,135 @@ m1 = pin.PWM (mA, 1000)
 m2 = pin.PWM (mB, 1000)
 m1.start(0)
 m2.start(0)
-#-----------------------------------------------------------
-#              COMANDOS DA CATRACA:
-
-
-
+#----------------------------------------------------------------------
 
 while 1:
-    print("esperandoConexão...")
-    com, cliente = Conexao.accept()
-    comandoRecebido = Conexao.recv(14)
-    msgRecebida = comandoRecebido.decode('utf-8')
+    time.sleep(0.5)
 
-    if msgRecebida == "LEVANTARCATRACA":
-        while pin.input(sensorFimdeCurso1) == 0:  # Sensor ultrasonico
-            CRT="DISP"
-            Conexao.send(bytes(CTR,'utf-8')
-            # CONSEGUIR DADOS FINAIS E CALCULAR
-            # ENVIAR DADOS
-            pin.output(mA, pin.HIGH)
-            pin.output(mB, pin.LOW)
-            m1.ChangeDutyCycle(100)
-            m2.ChangeDutyCycle(0)
-            Conexao.close()
-    elif msgRecebida == "ABAIXACATRACA":
+    Resposta= r.get(ipGet)
+    Resposta=json.loads(Resposta.text)
+    NovosDados={}
+    print(Resposta["ComandoAbrireFechar1"])
+
+
+    if str(Resposta["ComandoAbrireFechar1"])== "Abaixa":
+
+        print("Abaixando Catraca...")
+
+        minutoInicial = pd.datetime.now().minute
+        horaInicial = pd.datetime.now().hour
         while pin.input(sensorFimdeCurso2) == 0:
-            CRT="INDS"
-            # ARMAZENAR ESTADO DA CATRACA
-            # CONSEGUIR DADOS INICIAIS
             pin.output(mA, pin.LOW)
             pin.output(mB, pin.HIGH)
             m1.ChangeDutyCycle(0)
             m2.ChangeDutyCycle(5)
-            Conexao.close()
-    elif msgRecebida == "EstadoCatraca":
-        Conexao.send(bytes(CTR,'utf-8'))
-        Conexao.close()
+        payload = {"ComandoAbrireFechar1": "Em Espera"}
+        payload_em_json = json.dumps(payload)
+        response = r.post(ipPost, json=payload_em_json)
+
+
+    elif str(Resposta["ComandoAbrireFechar1"]) == "Levanta" and sensorFimdeCurso1==0:
+        print("Levantando Catraca...")
+        minutoFinal = pd.datetime.now().minute
+        horaFinal = pd.datetime.now().hour
+        minutoMedio = minutoFinal - minutoInicial
+        minutoMedio = float(minutoMedio / 60)
+        horaMedia = horaFinal - horaInicial
+        tempoFinal = float(horaMedia + minutoMedio)
+        # Numero de Pessoas:
+        numeroDePessoas = int(Resposta["NPessoasCatraca1"])
+        NovosDados["NPessoasCatraca1"] = numeroDePessoas + 1
+
+        # Tempo Total:
+        TempoTotal = float(Resposta["TempoTotalCatraca1"])
+        NovosDados["TempoTotalCatraca1"] = TempoTotal + tempoFinal
+        # Tempo Individual:
+        x=str(Resposta["TempoIndividualCatraca1"])
+        NovosDados["TempoIndividualCatraca1"]=(x+str(TempoTotal)+",")
+        # Tempo Médio:
+        TempoMedio = float(Resposta["TempoMedioCatraca1"])
+        NovosDados["TempoMedioCatraca1"] = str(float(NovosDados["TempoTotalCatraca1"]) / float(NovosDados["NPessoasCatraca1"]))
+        # Hora de Entrada:
+
+        NovosDados["HoraEntradaCatraca1"]=(Resposta["HoraEntradaCatraca1"]+str(horaInicial) + ",")
+
+        # Hora Final:
+        NovosDados["HoraSaidaCatraca1"]=(Resposta["HoraSaidaCatraca1"]+str(horaFinal)+",")
+
+        #Hora Mais Usada Entrada:
+
+
+        listaEntrada=Resposta["HoraEntradaCatraca1"].split(",")
+
+        ListaDeValores = {}
+        for valor in listaEntrada:
+            if valor not in ListaDeValores:
+                ListaDeValores[valor] = listaEntrada.count(valor)
+
+        menores = []
+        maiores = []
+        for valor in ListaDeValores:
+            soma = ListaDeValores[valor]
+            for verificador in ListaDeValores:
+                somatoria = ListaDeValores[verificador]
+                if soma > somatoria:
+                    if verificador not in menores:
+                        menores.append(verificador)
+                if valor not in menores:
+                    if valor not in maiores:
+                        maiores.append(valor)
+        for menor in menores:
+            if menor in maiores:
+                maiores.remove(menor)
+                HoraMaisUsada = int(maiores[0])
+                NovosDados["HoraEntradaMediaCatraca1"]=HoraMaisUsada
+        # Hora Mais Usada Saida:
+
+
+        listaSaida = Resposta["HoraSaidaCatraca1"].split(",")
+        ListaDeValores = {}
+        for valor in listaSaida:
+            if valor not in ListaDeValores:
+                ListaDeValores[valor] = listaSaida.count(valor)
+
+        menores = []
+        maiores = []
+        for valor in ListaDeValores:
+            soma = ListaDeValores[valor]
+            for verificador in ListaDeValores:
+                somatoria = ListaDeValores[verificador]
+                if soma > somatoria:
+                    if verificador not in menores:
+                        menores.append(verificador)
+                if valor not in menores:
+                    if valor not in maiores:
+                        maiores.append(valor)
+        for menor in menores:
+            if menor in maiores:
+                maiores.remove(menor)
+                HoraMaisUsada = int(maiores[0])
+                NovosDados["HoraSaidaMediaCatraca1"] = HoraMaisUsada
+
+
+        print(NovosDados)
+        payload = NovosDados
+        payload_em_json = json.dumps(payload)
+        response = r.post(ipPost, json=payload_em_json)
+        print(payload_em_json)
+        while pin.input(sensorFimdeCurso1) == 1:  # and  Sensor ultrasonico
+            print("Aguardando veiculo se retirar")
+
+        while pin.input(sensorFimdeCurso1) == 0:  # and  Sensor ultrasonico
+            # abaixar Catraca:
+
+            pin.output(mA, pin.HIGH)
+            pin.output(mB, pin.LOW)
+            m1.ChangeDutyCycle(100)
+            m2.ChangeDutyCycle(0)
+        payload = {"ComandoAbrireFechar1": "Em Espera"}
+        payload_em_json = json.dumps(payload)
+        response = r.post(ipPost, json=payload_em_json)
+
+
     else:
         print("Erro!")
