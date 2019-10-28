@@ -57,7 +57,7 @@ while 1:
         pin.output(mB, pin.LOW)
         m1.ChangeDutyCycle(0)
         m2.ChangeDutyCycle(0)
-
+        Resposta["ComandoAbrireFechar1"] = "Em Espera"
         payload = {"ComandoAbrireFechar1": "Em Espera"}
         payload_em_json = json.dumps(payload)
         response = r.post(ipPost, json=payload_em_json)
