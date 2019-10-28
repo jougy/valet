@@ -32,7 +32,7 @@ m2.start(0)
 #----------------------------------------------------------------------
 
 while 1:
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     Resposta= r.get(ipGet)
     Resposta=json.loads(Resposta.text)
@@ -158,7 +158,7 @@ while 1:
 
 
     else:
-        time.sleep(0.5)
+        time.sleep(1.5)
 
         Resposta = r.get(ipGet)
         Resposta = json.loads(Resposta.text)
