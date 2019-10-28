@@ -9,8 +9,8 @@ horaFinal=0
 minutoMedio=0
 horaMedia=0
 tempoFinal=0
-ipGet="http://192.168.43.227:5000/pegar"
-ipPost="http://192.168.43.227:5000/mudar"
+ipGet="http://192.168.43.166:5000/pegar"
+ipPost="http://192.168.43.166:5000/mudar"
 #--------------------------------------------------------------------
 #REFERENTE A PINAGEM
 import RPi.GPIO as pin
@@ -42,11 +42,12 @@ while 1:
 
     if str(Resposta["ComandoAbrireFechar1"])== "Abaixa":
 
-        print("Abaixando Catraca...")
+
 
         minutoInicial = pd.datetime.now().minute
         horaInicial = pd.datetime.now().hour
         while 1:
+            print("Abaixando Catraca...")
             pin.output(mA, pin.LOW)
             pin.output(mB, pin.HIGH)
             m1.ChangeDutyCycle(0)
@@ -63,7 +64,7 @@ while 1:
 
 
     elif str(Resposta["ComandoAbrireFechar1"]) == "Levanta":
-        print("Levantando Catraca...")
+
         minutoFinal = pd.datetime.now().minute
         horaFinal = pd.datetime.now().hour
         minutoMedio = minutoFinal - minutoInicial
@@ -151,7 +152,7 @@ while 1:
         response = r.post(ipPost, json=payload_em_json)
         print(payload_em_json)
         while 1:
-
+            print("Levantando Catraca...")
             # abaixar Catraca:
 
             pin.output(mA, pin.HIGH)
@@ -164,7 +165,7 @@ while 1:
             m1.ChangeDutyCycle(0)
             m2.ChangeDutyCycle(0)
             break
-            
+
         payload = {"ComandoAbrireFechar1": "Em Espera"}
         payload_em_json = json.dumps(payload)
         response = r.post(ipPost, json=payload_em_json)
