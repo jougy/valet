@@ -46,11 +46,17 @@ while 1:
 
         minutoInicial = pd.datetime.now().minute
         horaInicial = pd.datetime.now().hour
-        while pin.input(sensorFimdeCurso2) == 1:
+        while 1:
             pin.output(mA, pin.LOW)
             pin.output(mB, pin.HIGH)
             m1.ChangeDutyCycle(0)
             m2.ChangeDutyCycle(5)
+            time.sleep(1.5)
+            pin.output(mA, pin.LOW)
+            pin.output(mB, pin.LOW)
+            m1.ChangeDutyCycle(0)
+            m2.ChangeDutyCycle(0)
+            break
         payload = {"ComandoAbrireFechar1": "Em Espera"}
         payload_em_json = json.dumps(payload)
         response = r.post(ipPost, json=payload_em_json)
@@ -144,14 +150,21 @@ while 1:
         payload_em_json = json.dumps(payload)
         response = r.post(ipPost, json=payload_em_json)
         print(payload_em_json)
-        while pin.input(sensorFimdeCurso1) == 1:
-            
+        while 1:
+
             # abaixar Catraca:
 
             pin.output(mA, pin.HIGH)
             pin.output(mB, pin.LOW)
             m1.ChangeDutyCycle(100)
             m2.ChangeDutyCycle(0)
+            time.sleep(3)
+            pin.output(mA, pin.LOW)
+            pin.output(mB, pin.LOW)
+            m1.ChangeDutyCycle(0)
+            m2.ChangeDutyCycle(0)
+            break
+            
         payload = {"ComandoAbrireFechar1": "Em Espera"}
         payload_em_json = json.dumps(payload)
         response = r.post(ipPost, json=payload_em_json)
