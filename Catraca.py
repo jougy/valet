@@ -1,6 +1,4 @@
-Python 3.7.4 (tags/v3.7.4:e09359112e, Jul  8 2019, 19:29:22) [MSC v.1916 32 bit (Intel)] on win32
-Type "help", "copyright", "credits" or "license()" for more information.
->>> import requests as r
+import requests as r
 import json
 import pandas as pd
 import time
@@ -11,8 +9,8 @@ horaFinal=0
 minutoMedio=0
 horaMedia=0
 tempoFinal=0
-ipGet="http://192.168.25.23:5000/pegar"
-ipPost="http://192.168.25.23:5000/mudar"
+ipGet="http://192.168.43.227:5000/pegar"
+ipPost="http://192.168.43.227:5000/mudar"
 #--------------------------------------------------------------------
 #REFERENTE A PINAGEM
 import RPi.GPIO as pin
@@ -48,7 +46,7 @@ while 1:
 
         minutoInicial = pd.datetime.now().minute
         horaInicial = pd.datetime.now().hour
-        while pin.input(sensorFimdeCurso2) == 0:
+        while pin.input(sensorFimdeCurso2) == 1:
             pin.output(mA, pin.LOW)
             pin.output(mB, pin.HIGH)
             m1.ChangeDutyCycle(0)
@@ -58,7 +56,7 @@ while 1:
         response = r.post(ipPost, json=payload_em_json)
 
 
-    elif str(Resposta["ComandoAbrireFechar1"]) == "Levanta" and sensorFimdeCurso1==0:
+    elif str(Resposta["ComandoAbrireFechar1"]) == "Levanta":
         print("Levantando Catraca...")
         minutoFinal = pd.datetime.now().minute
         horaFinal = pd.datetime.now().hour
@@ -146,10 +144,8 @@ while 1:
         payload_em_json = json.dumps(payload)
         response = r.post(ipPost, json=payload_em_json)
         print(payload_em_json)
-        while pin.input(sensorFimdeCurso1) == 1:  # and  Sensor ultrasonico
-            print("Aguardando veiculo se retirar")
-
-        while pin.input(sensorFimdeCurso1) == 0:  # and  Sensor ultrasonico
+        while pin.input(sensorFimdeCurso1) == 1:
+            
             # abaixar Catraca:
 
             pin.output(mA, pin.HIGH)
@@ -162,4 +158,9 @@ while 1:
 
 
     else:
-        print("Erro!")
+        time.sleep(0.5)
+
+        Resposta = r.get(ipGet)
+        Resposta = json.loads(Resposta.text)
+        NovosDados = {}
+        print(Resposta["ComandoAbrireFechar1"])
