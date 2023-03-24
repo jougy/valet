@@ -1,5 +1,5 @@
 # VALET
-projeto IoT para a faculdade
+IoT project sponsored by Vivo for an intelligent gate that allows business owners to rent out their parking spots to drivers through an application. In addition to allowing users to conveniently find parking spots and make payments, the collected data provides insights into the profile of visitors to the locations. Technologies such as SolidWorks for 3D printing, Raspberry Pi for gate hardware, Python/Flask for gate and server software, and App Inventor for the mobile application were used for development.
   
 
 ## Instruções
