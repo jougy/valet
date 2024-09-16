@@ -43,13 +43,20 @@ GPIO.setup(ECHO, GPIO.IN)
 
 # Inicializa TRIG em nível lógico baixo
 GPIO.output(TRIG, False)
-time.sleep(1)
+time.sleep(0.00001)
 
 print ("Sampling Rate:", sampling_rate, "Hz")
 print ("Distances (cm)")
 
-# Loop principal. Será executado até que que seja pressionado CTRL-C
-while True:
+
+############################################################
+#                                                          #
+# Coloque a função 'sensor_distancia()' dentro de um while #
+#                                                          #
+############################################################
+
+# Loop principal.
+def sensor_distancia():
 
     # Gera um pulso de 10ms em TRIG.
     # Essa ação vai resultar na transmissão de ondas ultrassônicas pelo
@@ -87,4 +94,4 @@ while True:
 
     # Um pequeno delay para manter a média da taxa de amostragem
     time.sleep(1/sampling_rate)
-    time.sleep(0.2)
+    time.sleep(0.00001)
